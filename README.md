@@ -2,7 +2,11 @@
 
 Full documentation: [`docs/PLAYWRIGHT_AI_ORCHESTRATOR.md`](docs/PLAYWRIGHT_AI_ORCHESTRATOR.md)
 
+Architecture diagram: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
 ## Setup
+
+macOS/Linux:
 
 ```bash
 chmod +x setup.sh
@@ -10,6 +14,15 @@ chmod +x setup.sh
 ```
 
 Use `./setup.sh --skip-browsers` when Playwright browsers are already installed.
+
+Windows PowerShell:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\setup.ps1
+```
+
+Use `.\setup.ps1 -SkipBrowsers` when Playwright browsers are already installed.
 
 ## Configure and run
 
@@ -19,3 +32,7 @@ Use `./setup.sh --skip-browsers` when Playwright browsers are already installed.
 4. Run `npm run orchestrate`.
 
 Generated plans, tests, reports, and setup logs remain outside the target application.
+
+See the **Complete Windows walkthrough** in
+`docs/PLAYWRIGHT_AI_ORCHESTRATOR.md` for authentication, application startup,
+execution, outputs, and troubleshooting.

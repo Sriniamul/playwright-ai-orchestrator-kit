@@ -189,11 +189,115 @@ The orchestrator sets a non-zero exit status when configuration, an agent, gener
 
 ### Repository setup
 
+On macOS or Linux:
+
 ```bash
 npm ci
 npx playwright install chromium
 npm run build
 ```
+
+The same npm commands work in Windows PowerShell. A portable kit also includes
+`setup.ps1`, which performs installation, browser setup, validation, and build:
+
+```powershell
+.\setup.ps1
+```
+
+If PowerShell blocks local scripts, run this once in the current terminal only:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\setup.ps1
+```
+
+To reuse an existing Playwright browser installation:
+
+```powershell
+.\setup.ps1 -SkipBrowsers
+```
+
+### Complete Windows walkthrough
+
+Use a normal, non-administrator PowerShell terminal.
+
+1. Install Node.js 20 or newer from the Node.js website. Git is also recommended
+   when the project is obtained from source control.
+2. Open PowerShell in the repository or portable-kit directory and confirm the
+   required commands are available:
+
+   ```powershell
+   node --version
+   npm --version
+   ```
+
+3. Allow the setup script for the current PowerShell process. This does not
+   permanently change the machine's execution policy:
+
+   ```powershell
+   Set-ExecutionPolicy -Scope Process Bypass
+   ```
+
+4. Install locked npm dependencies, Chromium, and compile the orchestrator:
+
+   ```powershell
+   .\setup.ps1
+   ```
+
+   Use `.\setup.ps1 -SkipBrowsers` only when the Playwright Chromium browser is
+   already installed. Setup details are written to `logs\setup.log`.
+
+5. Authenticate Codex. For API-key authentication, set the key in the current
+   terminal so it is inherited by the Codex agent processes:
+
+   ```powershell
+   $env:OPENAI_API_KEY = "your-api-key"
+   ```
+
+   Alternatively, use an existing supported Codex CLI login. Never commit an
+   API key to this repository.
+
+6. Review `orchestrator.config.json`. Windows accepts the forward-slash relative
+   paths shown in the supplied configuration. Set `projectFolder` to the target
+   application's source directory and set `appUrl` to its running URL.
+
+7. Start the target application in a separate PowerShell terminal. For the
+   included Angular example:
+
+   ```powershell
+   Set-Location .\angular-app
+   npm ci
+   npm start
+   ```
+
+   Leave this terminal running. Verify that `http://localhost:4200` opens before
+   starting orchestration. For another target application, use that project's
+   normal start command and update `appUrl` accordingly.
+
+8. Return to the orchestrator directory in the first terminal and run:
+
+   ```powershell
+   npm run orchestrate
+   ```
+
+9. Review the generated artifacts:
+
+   ```text
+   specs\app-plan.md
+   tests\generated\*.spec.ts
+   reports\orchestrator-summary.json
+   playwright-report\
+   ```
+
+10. Run generated tests again or open the HTML report when needed:
+
+    ```powershell
+    npm run test:generated
+    npm run report
+    ```
+
+The target application must remain running while the planner, generator,
+Playwright runner, and healer use it.
 
 ### Run orchestration
 
@@ -227,9 +331,18 @@ The export excludes the sample target application, `node_modules`, compiled outp
 
 After copying the kit elsewhere:
 
+macOS/Linux:
+
 ```bash
 cd playwright-ai-orchestrator-kit
 ./setup.sh
+```
+
+Windows PowerShell:
+
+```powershell
+Set-Location playwright-ai-orchestrator-kit
+.\setup.ps1
 ```
 
 To use preinstalled Playwright browsers:
@@ -271,6 +384,34 @@ Consequently:
 ### `spawn codex ENOENT`
 
 Run `npm ci`. The project includes `@openai/codex`, and the adapter resolves `node_modules/.bin/codex` before falling back to `PATH`.
+
+On Windows, also rebuild after installing dependencies:
+
+```powershell
+npm run build
+npx codex --version
+```
+
+### PowerShell says script execution is disabled
+
+Allow scripts only for the current terminal, then retry setup:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\setup.ps1
+```
+
+### `OPENAI_API_KEY` is not recognized or authentication fails
+
+Set the variable and run orchestration in the same PowerShell terminal:
+
+```powershell
+$env:OPENAI_API_KEY = "your-api-key"
+npx codex --version
+npm run orchestrate
+```
+
+Opening a new terminal clears a process-scoped environment variable.
 
 ### `user cancelled MCP tool call`
 

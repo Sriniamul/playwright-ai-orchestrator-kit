@@ -68,6 +68,9 @@ export class CodexClient {
       const child = spawn(this.executable, args, {
         cwd: this.options.cwd,
         env: { ...process.env, ...this.options.env },
+        // npm exposes package binaries as .cmd launchers on Windows. Node must
+        // invoke those through cmd.exe; Unix executables can run directly.
+        shell: process.platform === "win32",
         stdio: ["pipe", "pipe", "pipe"],
       });
       let stdout = "";
