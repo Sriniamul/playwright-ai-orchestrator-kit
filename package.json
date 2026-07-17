@@ -1,0 +1,27 @@
+{
+  "name": "playwright-agent-orchestrator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --outDir dist",
+    "orchestrate": "npm run build && node dist/orchestrator.js",
+    "test:generated": "npx playwright test tests/generated",
+    "report": "npx playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@openai/codex": "^0.144.5",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "openai": "^6.47.0"
+  }
+}
