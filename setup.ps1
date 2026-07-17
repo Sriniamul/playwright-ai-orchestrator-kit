@@ -38,7 +38,14 @@ try {
     }
   }
 
-  $NodeMajor = [int]((& node -p 'Number(process.versions.node.split(".")[0])').Trim())
+
+$NodeVersion = (& node --version).Trim()
+
+if ($NodeVersion -match '^v(\d+)') {
+    $NodeMajor = [int]$Matches[1]
+} else {
+    throw "Unable to determine Node.js version."
+}
   if ($NodeMajor -lt 20) {
     throw "Node.js 20 or newer is required; found $(& node --version)."
   }
