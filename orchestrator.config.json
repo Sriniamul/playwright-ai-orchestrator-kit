@@ -1,10 +1,14 @@
 {
-  "projectFolder": "./target-app",
-  "appUrl": "http://localhost:4200",
-  "seedFile": "tests/seed.spec.ts",
-  "planFile": "specs/app-plan.md",
+  "projectFolder": "",
+  "appUrl": "",
+  "seedFile": "",
+  "planFiles": [
+    {
+    }
+  ],
   "generatedTestsFolder": "tests/generated",
   "reportsFolder": "reports",
   "maxHealAttempts": 3,
-  "testCommand": "npx playwright test tests/generated --reporter=line"
+  "retryBeforeHeal": 2,
+  "testCommand": "npx playwright test tests/generated"
 }

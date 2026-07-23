@@ -2,7 +2,7 @@
 
 Full documentation: [`docs/PLAYWRIGHT_AI_ORCHESTRATOR.md`](docs/PLAYWRIGHT_AI_ORCHESTRATOR.md)
 
-Architecture diagram: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+Architecture and flow diagrams: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 
 ## Setup
 
@@ -13,8 +13,6 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-Use `./setup.sh --skip-browsers` when Playwright browsers are already installed.
-
 Windows PowerShell:
 
 ```powershell
@@ -22,17 +20,40 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\setup.ps1
 ```
 
-Use `.\setup.ps1 -SkipBrowsers` when Playwright browsers are already installed.
-
 ## Configure and run
 
-1. Place the application source in `target-app/`, or update `projectFolder`.
-2. Update `appUrl` and `tests/seed.spec.ts` when required.
+1. Set the target application path and credentials in `orchestrator.config.json` and `.env`.
+2. Define per-module plan targets in `planFiles` (or use the single `planFile` fallback).
 3. Start the target application separately.
-4. Run `npm run orchestrate`.
+4. Run `npm run generate`.
 
-Generated plans, tests, reports, and setup logs remain outside the target application.
+```bash
+# Full orchestration: plan → generate → test → heal
+npm run generate
 
-See the **Complete Windows walkthrough** in
-`docs/PLAYWRIGHT_AI_ORCHESTRATOR.md` for authentication, application startup,
-execution, outputs, and troubleshooting.
+# Run only the generated tests
+npm run test:generated
+
+# Open the HTML report from the last test run
+npm run report
+
+# Export artifacts from the last run (logs, specs, test results)
+npm run export          # folder
+npm run export:zip      # compressed ZIP
+```
+
+## Key files
+
+| File | Purpose |
+|---|---|
+| `orchestrator.config.json` | Target app path, URLs, plan targets, heal attempts |
+| `.env` | `APP_URL`, `APP_USERNAME`, `APP_PASSWORD` (git-ignored) |
+| `tests/helpers/login.ts` | Reusable login function used by all tests |
+| `tests/fixtures.ts` | Playwright fixture — auto-logs in before every test |
+| `tests/seed.spec.ts` | Smoke test that verifies the login flow works |
+| `tests/generated/` | AI-generated spec files (cleared before each run) |
+| `specs/` | Test plan Markdown files (one per module) |
+| `reports/orchestrator-summary.json` | Machine-readable run summary |
+
+See [`docs/PLAYWRIGHT_AI_ORCHESTRATOR.md`](docs/PLAYWRIGHT_AI_ORCHESTRATOR.md) for the complete walkthrough.
+

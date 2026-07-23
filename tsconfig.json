@@ -27,8 +27,8 @@
     // Style Options
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
 
@@ -43,6 +43,10 @@
   },
   "include": [
     "orchestrator.ts",
+    "heal.ts",
+    "cleanup.ts",
+    "status.ts",
+    "discover.ts",
     "tools/**/*.ts"
   ],
   "exclude": [
