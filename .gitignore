@@ -1,10 +1,13 @@
 node_modules
 .env
-playwright/.auth//
+playwright/.auth/
 dist/
-logs/*.log
+logs/
+*.log
 reports/
+exports/
 test-results/
 playwright-report/
 tests/generated/
+specs/plan-*.md
 .playwright-mcp/

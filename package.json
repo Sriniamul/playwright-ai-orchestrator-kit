@@ -7,6 +7,8 @@
     "build": "tsc --outDir dist",
     "status": "npm run build && node dist/status.js",
     "cleanup": "npm run build && node dist/cleanup.js",
+    "cleanup:module": "npm run build && node dist/cleanup-module.js --",
+    "purge": "npm run build && node dist/purge.js",
     "discover": "npm run build && node dist/discover.js",
     "generate": "npm run build && node dist/orchestrator.js",
     "resume": "npm run build && node dist/orchestrator.js --resume",

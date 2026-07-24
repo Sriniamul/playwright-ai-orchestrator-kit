@@ -1,9 +1,27 @@
 {
-  "projectFolder": "",
-  "appUrl": "",
-  "seedFile": "",
+  "projectFolder": "\\\\10.218.233.186\\arm-arm",
+  "appUrl": "https://localhost",
+  "seedFile": "tests/seed.spec.ts",
   "planFiles": [
     {
+      "file": "specs/plan-access-rights-manager.md",
+      "scope": "Access Rights Manager module (/dashboard/start): all features, workflows, and states visible in this section of the application"
+    },
+    {
+      "file": "specs/plan-recent-changes-last-24-hours.md",
+      "scope": "Recent changes (Last 24 hours) module (/timeline): all features, workflows, and states visible in this section of the application"
+    },
+    {
+      "file": "specs/plan-requests.md",
+      "scope": "Requests module (/request): all features, workflows, and states visible in this section of the application"
+    },
+    {
+      "file": "specs/plan-group-policy-objects-gpos.md",
+      "scope": "Group Policy Objects (GPOs) module (/gpo): all features, workflows, and states visible in this section of the application"
+    },
+    {
+      "file": "specs/plan-recertification.md",
+      "scope": "recertification module: all AD recertification features, workflows, and states visible in this section of the application"
     }
   ],
   "generatedTestsFolder": "tests/generated",

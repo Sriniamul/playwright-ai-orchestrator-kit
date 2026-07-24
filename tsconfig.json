@@ -45,6 +45,8 @@
     "orchestrator.ts",
     "heal.ts",
     "cleanup.ts",
+    "cleanup-module.ts",
+    "purge.ts",
     "status.ts",
     "discover.ts",
     "tools/**/*.ts"

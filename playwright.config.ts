@@ -4,6 +4,9 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+type VideoMode = 'off' | 'on' | 'retain-on-failure' | 'on-first-retry';
+const videoMode = (process.env.PLAYWRIGHT_VIDEO ?? 'off') as VideoMode;
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -19,6 +22,8 @@ export default defineConfig({
   use: {
     trace: 'on-first-retry',
     ignoreHTTPSErrors: true,
+    screenshot: 'only-on-failure',
+    video: videoMode,
   },
 
   projects: [

@@ -204,19 +204,24 @@ export class PlaywrightOrchestrator {
 
   public async validateProjectFolder(): Promise<void> {
     if (!this.projectRoot) {
-      console.warn("No projectFolder configured — source scan will be skipped.");
+      console.log("  Source scan   : skipped (no projectFolder configured) — planning from live app only.");
       return;
     }
+    console.log(`  Source scan   : checking ${this.config.projectFolder} ...`);
     const stat = await fs.stat(this.projectRoot).catch(() => undefined);
     if (!stat?.isDirectory()) {
-      console.warn(`Project folder not found: ${this.projectRoot} — source scan will be skipped.`);
+      console.warn(`  Source scan   : ⚠ path not accessible (${this.projectRoot}) — source scan will be skipped, planning from live app only.`);
       this.projectRoot = "";
+    } else {
+      console.log(`  Source scan   : ✓ path accessible — will scan before planning starts.`);
     }
   }
 
   public async scanProjectFolder(): Promise<string> {
     if (!this.projectRoot) return this.projectSummary;
+    console.log(`\n  Scanning project source at ${this.config.projectFolder} ...`);
     this.projectSummary = formatProjectSummary(await scanProject(this.projectRoot));
+    console.log(`  Source scan complete — context passed to planner.\n`);
     return this.projectSummary;
   }
 
@@ -265,16 +270,26 @@ export class PlaywrightOrchestrator {
    */
   /**
    * Writes auto-discovered planFiles back into orchestrator.config.json.
+   * Merges with any existing planFiles already in the config — never replaces them.
    * After the first run the config is self-complete — no re-discovery needed.
    */
   private async persistPlanTargets(targets: PlanTarget[]): Promise<void> {
     try {
       const raw = await fs.readFile(this.configPath, "utf8");
       const config = JSON.parse(raw) as Record<string, unknown>;
-      config["planFiles"] = targets;
+      // Preserve any manually configured planFiles — only add genuinely new entries.
+      const existing: PlanTarget[] = Array.isArray(config["planFiles"]) ? config["planFiles"] as PlanTarget[] : [];
+      const existingKeys = new Set(existing.map((t) => t.file.replace(/\\/g, "/")));
+      const newOnly = targets.filter((t) => !existingKeys.has(t.file.replace(/\\/g, "/")));
+      const merged = [...existing, ...newOnly];
+      config["planFiles"] = merged;
       await fs.writeFile(this.configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
-      console.log(`  Saved ${targets.length} discovered module(s) to ${path.basename(this.configPath)}.`);
-      console.log("  Edit the 'scope' values to refine what each module's planner focuses on.\n");
+      if (newOnly.length > 0) {
+        console.log(`  Saved ${newOnly.length} newly discovered module(s) to ${path.basename(this.configPath)}.`);
+        console.log("  Edit the 'scope' values to refine what each module's planner focuses on.\n");
+      } else {
+        console.log(`  No new modules found beyond the ${existing.length} already in config.\n`);
+      }
     } catch (err) {
       console.warn(`  Could not save planFiles to config: ${messageOf(err)}`);
     }
@@ -539,7 +554,6 @@ ${truncate(result.output, 20_000)}`);
       const completedPlans = resume ? await this.completedPlanFiles() : new Set<string>();
 
       let overallExitCode = 0;
-
       overallExitCode = await this.runModuleList(targets, completedPlans, overallExitCode, 0, resume);
 
       // After processing pre-configured planFiles, discover the live UI for any new
